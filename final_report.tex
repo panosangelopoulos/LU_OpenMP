@@ -1,0 +1,589 @@
+\documentclass[greek,booktabs,8pt,flagBlueCMYK]{report}
+\usepackage{lscape}
+\usepackage{isorot}
+\usepackage{xkeyval}
+\usepackage{polyglossia}
+\usepackage{amsmath}
+
+\newfontfamily\greekfont[Script=Greek]{Linux Libertine O}
+\newfontfamily\greekfontsf[Script=Greek]{Linux Libertine O}
+
+\setmainlanguage{greek}
+\setotherlanguages{english}
+\usepackage{fontspec}
+\setmainfont[Kerning=On,Mapping=tex-text]{Minion Pro}
+
+\usepackage[framed,numbered]{mcode}
+
+\usepackage{geometry}
+
+\usepackage{placeins}
+
+\usepackage{float}
+
+\usepackage{hyperref}
+%\usepackage{mathtools}
+\usepackage{graphicx}
+\geometry{total={210mm,297mm},
+left=20mm,right=20mm,
+bindingoffset=10mm, top=20mm,bottom=20mm}
+
+%TITLE
+\title{Παράλληλη Επεξεργασία - Project \\ 2013 - 2014 \\ ΕΤΥ}
+\author{Αγγελόπουλος Παναγιώτης ΑΜ. 946 \\ Μυσιρλίδης Χαράλαμπος ΑΜ. 949\\ Πλέσσας Κωνσταντίνος ΑΜ. 951}
+\date{\parbox{\linewidth}{\centering%
+  \today\endgraf\bigskip
+  %A.M.: 946\endgraf\medskip
+  e-mail:\{angelop,mysirlidis,kplessas\}@ceid.upatras.gr \endgraf
+  \LaTeX \endgraf}}
+%TITLE
+
+
+\begin{document}
+
+\maketitle
+
+%CHAPTER
+\makeatletter
+\renewcommand{\@makechapterhead}[1]{%
+  \vspace*{50\p@}%
+  {\parindent \z@ \raggedright \normalfont
+  \hrule                                        % horizontal line
+  \vspace{5pt}%                                 % add vertical space
+  \interlinepenalty\@M
+  \Huge \scshape #1\par                         % chapter title
+  \vspace{5pt}%                                 % add vertical space
+  \hrule                                        % horizontal rule
+  \nobreak
+  \vskip 40\p@
+  }
+}
+\makeatother
+%CHAPTER
+
+%ROMAN NUM
+\makeatletter
+\newcommand*{\rom}[1]{\expandafter\@slowromancap\romannumeral #1@}
+\makeatother
+%ROMAN NUM
+
+\tableofcontents
+\large
+\chapter{Κεφάλαιο 1 - Εισαγωγικά}
+\paragraph{\rom{1}.} Η εργασία πραγματοποιήθηκε με την χρήση του Intel i7-3770 CPU @ 3.40GHz με 8MB cache memory, λειτουργικό σύστημα Ubuntu 14.04 64-bit και 16gb RAM\newline
+
+\paragraph{\rom{2}.}\textbf{Σημαντικές παρατηρήσεις:}\newline
+Ο συγκεκριμένος επεξεργαστής περιλαμβάνει βασικά χαρακτηριστικά στοιχεία όπως αυτά αναφέρονται στον παρακάτω πίνακα~\ref{tab:table_1} : \newline 
+
+\begin {table}[H]
+\begin{center}
+\label{tab:table_1}
+\begin{tabular}{ l | c }
+  \hline
+  Processor Number &	i7-3770 \\ \hline
+  \# of Cores &	4 \\ \hline
+  \# of Threads &	8 \\ \hline
+  Clock Speed &	3.4 GHz \\ \hline
+  Max Turbo Frequency &	3.9 GHz \\ \hline
+  Instruction Set &	64-bit\\ \hline
+  Instruction Set Extensions &	SSE4.1/4.2, AVX\\ \hline
+  Intel® vPro Technology	& Yes\\ \hline
+  Intel® Hyper-Threading Technology &	Yes\\ \hline
+  Intel® Virtualization Technology (VT-x) & 	Yes\\ \hline
+\end {tabular}
+\caption {Χαρακτηριστικά επεξεργαστή}
+\end{center}
+\end {table}
+
+Κατά την εκτέλεση του προγράμματος παρατηρείται ότι ο επεξεργαστής μας χρησιμοποιεί διαφορετικό clock speed size (μέγεθος ταχύτητας ρολογιού) και πιο συγκεκριμένα όταν δοθεί η εντολή :
+\begin{lstlisting}
+  export OMP_NUM_THREADS = 1
+\end{lstlisting}
+τότε το clock speed size που χρησιμοποιείται είναι ίσο με 3.9 GHz. Η συγκεκριμένη συμπεριφορά του επεξεργαστή είναι κάτι απολύτως λογικό καθώς εξαιτίας του φράγματος που τοποθετούμε για την χρήση μόνο ενός νήματος, η ταχύτητα του ρολογίου αυξάνεται με στόχο την μείωση του χρόνου εκτέλεσης. 
+\FloatBarrier
+Παρόμοια συμπεριφορά πραγματοποιείται και με την επιλογή της χρήσης δύο νημάτων, όπου εκεί η ταχύτητα του ρολογιού μειώνεται στα 3.6 GHz. 
+\FloatBarrier
+Μετά την χρήση τεσσάρων νημάτων η ταχύτητα που επιτυγχάνει το ρολόι είναι η ταχύτητα που μας δείχνει ο πίνακας των χαρακτηριστικών του επεξεργαστή, 3.4GHz.
+Η περιγραφή της παραπάνω τεχνολογίας πραγματοποιείται στο κεφάλαιο 5.
+
+\clearpage
+\paragraph{\rom{3}.} \textbf{Περιπτώσεις:}\newline
+Χρησιμοποιώντας τον κώδικα μας εξετάστηκαν ως περιπτώσεις για την λήψη των τελικών αποτελεσμάτων καθώς και την πραγματοποίηση σύγκρισής τους ανάλογα με τις αλλαγές που πραγματοποιούσαμε κάθε φορά οι τιμές που εμφανίζονται στον ακόλουθο πίνακα :
+
+\begin{table}[H]
+\begin{center}
+\label{tab:2} 
+\begin{tabular}{ l | c }
+  \hline
+  Διαστάσεις Πίνακα & Μέγεθος Block \\ \hline
+  512x512 & 16 \\ \hline 
+  1000x1000 & 500 \\ \hline
+  2000x2000 & 1000 \\ \hline
+  4000x4000 & 2000 \\ \hline
+  8000x8000 & 4000 \\ \hline
+\end{tabular}
+\caption {Πίνακας τιμών}
+\end{center}
+\end{table}
+
+Η σκέψη για την αλλαγή του μεγέθους του block προήλθε απο τον πειραματισμό μας με διαφορετικά block sizes και την διαπίστωση ότι ένα block size το οποίο είναι το μισό από τις διαστάσεις του πίνακα μας παρουσιάζει βέλτιστους χρόνους. Έτσι η εξίσωση που χρησιμοποιήσαμε για να τοποθετούμε το block size κάθε φορά είναι :
+\begin{center}
+\begin{equation}
+  $$\[b = \frac{n}{2}\]$$
+\end{equation}
+\end{center}
+
+\chapter{Κεφάλαιο 2 - Σειριακός κώδικας}
+\paragraph{\rom{1}.} \textbf{Σειριακή ανάλυση:}\newline
+Από την ανάλυση που πραγματοποιήσαμε πάνω στο πρόγραμμα και με τη βοήθεια του scalasca γίνεται εύκολα αντιληπτό πως οι συναρτήσεις που καταναλώνουν τον περισσότερο χρόνο κατά την εκτέλεση του προγράμματος είναι οι εξής:
+\begin{itemize}
+  \item bmod ( double *a, double *b, double *c, long dimi, long dimj, long dimk, long stride )
+  \item void daxpy ( double *a, double *b, long n, double alpha )
+\end{itemize}
+Όπως φαίνεται και στην παρακάτω εικόνα~\ref{fig:serial_1} (ανάλυση με scalasca) ο συνολικός χρόνος εκτέλεσης του προγράμματος είναι 2.36 δευτερόλεπτα με τις πιο βαριά υπολογιστικά συναρτήσεις να είναι οι παραπάνω. 
+\FloatBarrier 
+Η bmod καταναλώνει 1.06$''$ και η daxpy  1.14$''$
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=1\textwidth]{serial_1.png}
+\caption{\textit{Ανάλυση χρόνου εκτέλεσης σειριακής έκδοσης προγράμματος}}
+\label{fig:serial_1}
+\end{figure}
+
+\clearpage
+\paragraph{\rom{2}.} \textbf{Συνάρτηση bmod:}\newline
+Ο λόγος για τον οποίο η bmod καταναλώνει τον περισσότερο χρόνο έχει να κάνει με παράγοντες όπως:
+\begin{itemize}
+  \item data cache misses
+  \item Σύνολο αναφορών στην μνήμη
+  \item TLB misses
+  \item Μεγάλου αριθμού πράξεων (κλήση της daxpy)
+\end{itemize}
+Πιο συγκεκριμένα, όταν το πρόγραμμά μας έχει πρόσβαση σε μία θέση μνήμης ή οποία δεν βρίσκεται στην κρυφή τότε έχουμε το λεγόμενο cache miss και το αίτημα εξυπηρετείται είτε από το επόμενο επίπεδο κρυφής μνήμης είτε απευθείας από την κύρια μνήμα. Στην περίπτωση που έχουμε cache miss είναι εμφανές ότι ο επεξεργαστής θα πρέπει να περιμένει να λάβει τα επιθυμητά στοιχεία αρκετό χρόνο προτού ξεκινήσει τις απαραίτητες διεργασίες και αυτό σαφώς επηρεάζει την απόδοση της εφαρμογής. Οι μετρήσεις που φαίνονται στις παρακάτω εικόνες αφορούν συνολικά cache misses στα level 1, 2 και 3 και ο πίνακας που χρησιμοποιήθηκε ήταν μεγέθους 1000 Χ 1000 με μπλοκ μεγέθους 500.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=1\textwidth]{serial_2.png}
+\caption{\textit{Total cache misses - Level 1}}
+\label{fig:serial_2}
+\end{figure}
+
+\clearpage
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=1\textwidth]{serial_2_b.png}
+\caption{\textit{Total cache misses - Level 2}}
+\label{fig:serial_2_b}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=1\textwidth]{serial_2_c.png}
+\caption{\textit{Total cache misses - Level 3}}
+\label{fig:serial_2_c}
+\end{figure}
+
+\clearpage
+
+Ο αμέσως επόμενος παράγοντας είναι τα TLB misses.  Όπως γνωρίζουμε, μία CPU έχει μία κρυφή μνήμη που ονομάζεται TLB (Translation Lookaside Buffer) και η οποία είναι υπεύθυνη για μετάφραση της φυσικής μνήμης σε εικονική μνήμη και αποτελεί ξεχωριστή κρυφή μνήμη από τις υπόλοιπες επειδή είναι γρηγορότερο για την CPU να ψάξει μία θέση μνήμης εκεί απ’ότι σε μία άλλη κρυφή μνήμη. Η λειτουργικότητα του TLB φαίνεται στην παρακάτω 
+εικόνα~\ref{fig:serial_3}. 
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.8\textwidth]{serial_3.jpg}
+\caption{\textit{Translation Lookaside Buffer}}
+\label{fig:serial_3}
+\end{figure}
+
+Όταν η εφαρμογή μας εκτελεί μία αναφορά σε θέση μνήμης, η εικονική διεύθυνση στέλνεται στο TLB για να καθοριστεί εφόσον και εάν περιέχεται μία μετάφραση για τη ζητούμενη διεύθυνση. Εφόσον υπάρχει τότε λέμε ότι έχουμε TLB hit και επιστρέφεται η ζητούμενη διεύθυνση. Εάν δεν υπάρχει τότε δημιουργείται TLB miss και η CPU ψάχνει απευθείας στον πίνακα σελίδων (page table) για τη μετάφραση καταναλώνοντας και εδώ πολύ περισσότερο χρόνο με αρνητική επίδραση στην απόδοση της εφαρμογής.  
+\FloatBarrier 
+Στην περίπτωση μας όπως φαίνεται και στην επόμενη σελίδα έχουμε σε αυτή τη συνάρτηση αρκετά TLB misses που ουσιαστικά επιδρούν στην απόδοση του προγράμματος. 
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=1\textwidth]{serial_4_a.png}
+\caption{\textit{Data Translation Lookaside Buffer Misses }}
+\label{fig:serial_4_a}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=1\textwidth]{serial_4_b.png}
+\caption{\textit{Instructions Translation Lookaside Buffer Misses}}
+\label{fig:serial_4_b}
+\end{figure}
+
+\clearpage
+Επίσης, μία άλλη σημαντική παράμετρος που παρατηρούμε από την εκτέλεση του προγράμματος είναι πως ο χρόνος εκτέλεσης της bmod εξαρτάται σε πολύ μεγάλο βαθμό από το χρόνο εκτέλεσης της daxpy καθώς εκεί καλείται και τις περισσότερες φορές (τα loops είναι σαφώς περισσότερα από οπουδήποτε αλλού που καλείται η ίδια συνάρτηση) και επομένως αυξάνονται τα branches λόγω της επαναληπτικότητας των πράξεων πράγμα που αυξάνει και τον συνολικό αριθμό πράξεων στην εφαρμογή. Στις εικόνες~\ref{fig:5_a} και~\ref{fig:5_b} φαίνονται οι παραπάνω παράμετροι τις οποίες λάβαμε από μέσω του PAPI χρησιμοποιώντας τις παραμέτρους PAPI\_BR\_TKN για τις διακλαδώσεις και  PAPI\_FP\_OPS για τις πράξεις κινητής υποδιαστολής της εφαρμογής
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=1\textwidth]{serial_5_a.png}
+\caption{\textit{Branches}}
+\label{fig:5_a}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=1\textwidth]{serial_5_b.png}
+\caption{\textit{Float point operations}}
+\label{fig:5_b}
+\end{figure}
+
+\clearpage
+
+\paragraph{\rom{3}.} \textbf{Χρόνοι Σειριακής Εκτέλεσης Προγράμματος:}\newline
+
+\begin{table}[H]
+\begin{center}
+\label{tab:3} 
+\begin{tabular}{| l | c | r |}
+  \hline
+  Διαστάσεις Πίνακα & Μέγεθος Block & Χρόνος Εκτέλεσης ($''$)\\ \hline
+  512x512 & 16 &  2.36\\ \hline 
+  512x512 & 256 &  0.328725 \\ \hline
+  1000x1000 & 500 &   1.407272\\ \hline
+  2000x2000 & 1000 &  8.790405\\ \hline
+  4000x4000 & 2000 &  61.243530\\ \hline
+  8000x8000 & 4000 &  429.226943\\ \hline
+\end{tabular}
+\caption {Πίνακας τιμών}
+\end{center}
+\end{table}
+
+\begin{figure}[ht]
+\centering
+\label{fig:serial_example}
+\includegraphics[width=0.80\textwidth]{serial_example.png}
+\caption{\textit{Παράδειγμα εκτέλεσης σειριακού κώδικα με πίνακα 1000x1000 και block size 500}}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\label{fig:table_serial}
+\includegraphics[width=0.9\textwidth]{table_serial.png}
+\caption{\textit{Γραφική Παράσταση χρόνου εκτέλεσης σειριακού κώδικα.}}
+\end{figure}
+
+
+\clearpage
+\chapter{Κεφάλαιο 3 - Παραλληλοποίηση με OpenMP (χωρίς SIMD εντολές)}
+\paragraph{\rom{1}.} \textbf{Εισαγωγή:}\newline
+Η επιλογή των OpenMP εντολών που θα χρησιμοποιήσουμε στον κώδικά μας πραγματοποιείται μετά την λεπτομερή ανάλυση του παραπάνω σειριακού προγράμματος.
+Αρχικό μας μέλημα αποτελεί η χρήση των εντολών σε σημεία όπου θα μας παράξουν παράλληλα τμήματα εκτέλεσης του κώδικα και εμφανώς βελτιστοποιημένους χρόνους εκτέλεσης.
+\paragraph{\rom{2}.} \textbf{Συναρτήσεις προς παραλληλοποίηση:}\newline
+Οι συναρτήσεις οι οποίες και είναι υποψήφιες για παραλληλοποίηση είναι οι συναρτήσεις με τον μεγαλύτερο χρόνο εκτέλεσης. Έτσι η συνάρτηση bmod, 
+η οποία και χρειάζεται 44,87\% του συνολικού χρόνου εκτέλεσης, καθώς και daxpy όπου και καλείται απο την συγκεκριμένη συνάρτηση χρειάζεται αντίστοιχα 40\%. 
+
+\paragraph{\rom{3}.} \textbf{Διαδικασία Παραλληλοποίησης:}\newline
+Με βασικό στόχο την μείωση των παραπάνω χρόνων εκτέλεσης εφαρμόσαμε παραλληλισμό στα παραπάνω σημεία και καταφέραμε να μειώσουμε τον χρόνο που καταναλώνουν τα loops. \newline
+\FloatBarrier
+Στην κλήση της bmod χρησιμοποιούμε τις παρακάτω εντολές :
+\begin{itemize}
+  \item \bf{pragma omp parallel shared (a, b, c, stride, dimi, dimk, dimj) private (j, k)}
+  \item \bf{pragma omp parallel for nowait reduction ( - : alpha) schedule (guided)}
+\end{itemize}
+Αναλυτικά ακολουθεί η επεξήγηση και η τεκμηρίωση της χρήσης των παραμέτρων :
+
+\begin{enumerate}
+  \item Το \textbf{parallel} ορίζει την παράλληλη περιοχή
+  \item Το \textbf{shared} ορίζει τις μεταβλητές ως κοινές μεταξύ των νημάτων
+  \item Το \textbf{private} τοποθετεί τις τιμές των j και k σε ιδιωτική περιοχή μνήμης για την αποφυγή της χρήσης ίδιας τιμής από άλλο νήμα εκτέλεσης \newline
+
+Η δεύτερη εντολή του OpenMP η οποία και ακολουθεί την πρώτη εφαρμόζει τις παραμέτρους parallel, for, schedule και στην τελευταία θέτει ως όρισμα το guided. Η τεκμηρίωση της χρήσης των παραμέτρων και ορισμάτων αναλύεται :
+
+  \item To \textbf{for} χρησιμοποιείται για την διαμοίραση των επαναλήψεων του loop ανάμεσα στα νήματα της παράλληλης περιοχής που ορίσαμε.
+  \item To \textbf{nowait} παραχωρεί το επόμενο σύνολο εντολών χωρίς να περιμένει όλα τα threads να ολοκληρώσουν την εκτέλεσή
+  \item To \textbf{reduction (- : alpha)}  εφαρμόστηκε για το τελεστή -, στη μεταβλητή alpha. Έτσι ένα τοπικό αντίγραφο της μεταβλητής alpha
+        δημιουργήθηκε σε κάθε νήμα, το οποίο εφάρμοζε τον τελεστή στο τοπικό αντίγραφο του, για το έργο που του διαμοιράστηκε.
+        Εν τέλει όλα τα νήματα μεταξύ τους συνόψισαν το αποτέλεσμα της τοπικής τους μεταβλητής, στην “τελική” μεταβλητή.
+        Καταφέραμε με αυτόν τον τρόπο ο συνολικός αριθμός που θα εκτελείτο η πράξη, να μοιραστεί στα νήματα , με αποτέλεσμα να
+        επιτύχουμε μικρότερο χρόνο εκτέλεσης.
+  \item Το \textbf{schedule} υποδεικνύει πως ανατίθενται οι επαναλήψεις του loop στα νήματα.
+  \item Το \textbf{guided} επιτυγχάνει δυναμική ανάθεση τμημάτων εκθετικά μειούμενου μεγέθους .
+\end{enumerate}
+
+\paragraph{\rom{4}.} \textbf{Πίνακες Μετρήσεων:}\newline
+
+\begin{table}[H]
+\begin{center}
+\label{tab:4} 
+\begin{tabular}{| l | c | r | l | c | r | l |}
+  \hline
+  \multicolumn{7}{|c|}{Διαστάσεις Πίνακα} \\ \hline
+  Αριθμός νημάτων & 512x512 (default) & 512x512 & 1000x1000 & 2000x2000 & 4000x4000 & 8000x8000\\ \hline 
+  1 thread   & 2.413764 &   0.590486  &  1.407994   & 8.714287  & 59.479384 &  427.225723 \\ \hline
+  2 threads  & 1.357481 &   0.593537  &  1.174003   & 7.162974  & 48.908118 &  353.744774 \\ \hline
+  4 threads  & 1.08924  &   0.591339  &  1.095057   & 6.404521  & 43.790421 &  277.052963 \\ \hline
+  8 threads  & 0.724455 &   0.59031  &  1.048847   & 6.284449  & 43.474974  &  227.2039   \\ \hline
+\end{tabular}
+\caption {Πίνακας τιμών με OpenMP και optimization level 0}
+\end{center}
+\end{table}
+
+\begin{table}[H]
+\begin{center}
+\label{tab:5} 
+\begin{tabular}{| l | c | r | l | c | r | l |}
+  \hline
+  \multicolumn{7}{|c|}{Διαστάσεις Πίνακα} \\ \hline
+  Αριθμός νημάτων & 512x512 (default) & 512x512 & 1000x1000 & 2000x2000 & 4000x4000 & 8000x8000 \\ \hline 
+  2 threads  & 1.74 & 0.56 & 1.21 & 1.23 & 1.25 & 1.20 \\ \hline
+  4 threads  & 2.17 & 0.56 & 1.30 & 1.37 & 1.40 & 1.54 \\ \hline
+  8 threads  & 3.26 & 0.56 & 1.35 & 1.40 & 1.41 & 1.88 \\ \hline
+\end{tabular}
+\caption {Πίνακας SpeedUp}
+\end{center}
+\end{table}
+
+Τα αποτελέσματα για 512x512 πίνακα με block size 256 δεν μας αποδίδουν ουσιαστικά τιμές οι οποίες είναι αποδεκτές.
+
+\begin{table}[H]
+\begin{center}
+\label{tab:6} 
+\begin{tabular}{| l | c | r | l | c | r | l |}
+  \hline
+  \multicolumn{7}{|c|}{Διαστάσεις Πίνακα} \\ \hline
+  Αριθμός νημάτων & 512x512 (default) & 512x512 & 1000x1000 & 2000x2000 & 4000x4000 & 8000x8000\\ \hline 
+  1 thread   & 0.142032 &	0.105549 &	0.710781 &	5.841586 &	47.634757 &  251.96301 \\ \hline
+  2 threads  & 0.110808 &	0.088215 &	0.580791 &	4.754119 &	41.874319 &  206.382577 \\ \hline
+  4 threads  & 0.108081 &	0.081186 &	0.565137 &	4.469314 &	34.906886 &  181.497849 \\ \hline
+  8 threads  & 0.09415 &	0.090428 &	0.528604 &	4.190218 &	34.974317 &  179.235389 \\ \hline
+\end{tabular}
+\caption {Πίνακας τιμών με OpenMP και optimization level 3}
+\end{center}
+\end{table}
+
+\paragraph{\rom{5}.} \textbf{Γραφικές Παραστάσεις:}\newline
+
+\begin{figure}[ht]
+\centering
+\label{fig:table_serial}
+\includegraphics[width=0.9\textwidth]{openmp_O0.png}
+\caption{\textit{Γραφική Παράσταση OpenMP και optimization level 0}}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\label{fig:table_serial}
+\includegraphics[width=0.9\textwidth]{speedup.png}
+\caption{\textit{Γραφική Παράσταση SpeedUp}}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\label{fig:table_serial}
+\includegraphics[width=0.9\textwidth]{openmp_O3.png}
+\caption{\textit{Γραφική Παράσταση OpenMP και optimization level 3}}
+\end{figure}
+
+\chapter{Κεφάλαιο 4 - Παραλληλοποίηση με OpenMP με SIMD εντολές)}
+\paragraph{\rom{1}.} \textbf{Εισαγωγή:}\newline
+Μετά από ανάλυση του προγράμματος αλλά και του κώδικα που είχαμε στην κατοχή μας αφού το έχουμε παραλληλοποιήσει με την χρήση του OpenMP μπορέσαμε και βρήκαμε τα σημεία στα οποία υπήρχε η ανάγκη χρήσης SIMD εντολών για τον υπολογισμό των διανυσμάτων. Μετά απο εκτενεί μελέτη των SIMD εντολών επιλέξαμε ένα σύνολο συναρτήσεων που μας ήταν αναγκαίες για για να τα κομμάτια του κώδικα μας.
+
+\paragraph{\rom{2}.} \textbf{Συναρτήσεις προς παραλληλοποιηση:}\newline
+Στο συγκεκριμένο σημείο μετά από ανάλυση του προγράμματος μας με την βοήθεια το scalasca βρήκαμε οτι ανάγκη σε υπολογιστή ισχύ ήταν η συνάρτηση daxpy. Μετά από ανάλυση των δυνατοτήτων του επεξεργαστή μας βρήκαμε οτι εκτός από Streaming SIMD Extensions (SSE) εντολές με 128bit vectors είχαμε δυνατότητα τρέξουμε επιπλέον και εντολές Advanced Vector eXtension (AVX, μιας και μας το επιτρέπει ο Core i7 3770 ) που έχουν διπλάσια εύρος υπολογισμού διανυσμάτων (256bit), για αυτό επιλέξαμε να τα εκτελέσουμε και σαν διαφορετικά σενάρια και να δουμε τις διαφορές που μπορεί να μας προσφέρει και η κάθε τεχνολογία. Η συνάρτηση η οποία διαλέξαμε προς επεξεργασία ήταν η daxpy μιας και ο υπολογισμός που εκτελούσε ήταν ένας πολλαπλασιασμός αλλά και αλλά και μια πρόσθεση:
+
+\begin{lstlisting}
+  for ( i=0; i<n; i++ ) { ;
+  a[i] += alpha*b[i]; 
+\end{lstlisting}
+
+\paragraph{\rom{3}.} \textbf{Παραμετροποίηση Συνάρτησης daxpy :}\newline
+Με βάση τα παραπάνω η παραμετροποίηση της συνάρτησης διαμορφώνετε ως εξής με την χρήση εντολών SSE:
+\begin{lstlisting}
+  __m128d v_b, v_a; 
+  __m128d v_alpha = _mm_load1_pd(&alpha);  
+  
+  for( i = 0 ; i < n/2 ; i++){ 
+  v_b =  _mm_loadu_pd(b+i*2); 
+  v_a =  _mm_loadu_pd(a+i*2); 
+	v_a = _mm_add_pd(v_a, _mm_mul_pd(v_alpha, v_b)); 
+	_mm_storeu_pd(a,v_a);
+\end{lstlisting}
+
+Η επιλογή των συγκεκριμένων συναρτήσεων:
+\begin{itemize}
+  \item Στην πρώτη γραμμή υπάρχει η δήλωση των μεταβλητών (vector) $v\_b, v\_a$, η πρώτη μας σκέψη ήταν να κάνουμε cast του αντίστοιχους πίνακες $double * b$ & $double * a$ στα παραπάνω διανύσματα. Δυστυχώς κατα την εκτέλεση είχαμε run time errors και επιλέξαμε να τις κάνουμε load με την χρήση συναρτήσεων που θα σχολιάσουμε παρακάτω.
+  \item Στην επόμενη γραμμή (γρ. 2) φορτώνουμε σε ένα διάνυσμα $v\_alpha$ την τιμή την μεταβλητής alpha, επειδή οι double είναι 64bit χρειαζόμασταν να γεμίσουμε και τις 2 θέσεις μνήμης εύρους 128bit που μας προσφέρει o συγκεκριμένος τύπος διανύσματος με την βοήθεια της συνάρτησης $\_\_m128d \_mm\_load1\_pd (double * P) $.
+  \item Ο αριθμός των επαναλήψεις μειώνετε στο μισό επειδή το μέγεθος των διανυσμάτων μας είναι διπλάσιο από το μέγεθος των μεταβλητών μας. Στην επόμενη περίπτωση που θα χρησιμοποιήσουμε AVX θα δούμε οτι επειδή έχουμε το τετραπλάσιο εύρος θα χρειαστεί να κάνουμε το $1/4$ των συνολικών επαναλήψεων.
+  \item Η συνάρτηση $v\_b =  \_mm\_loadu\_pd(b+i*2)$ τοποθετεί τα δεδομένα της μεταβλητής b (στη θέση μνήμης $i * 2$) στο διάνυσμα $v\_b$ χωρίς να χρειάζεται τα δεδομένα να είναι aligned, το ίδιο και με την $v\_a$.
+  \item Η συνάρτηση $\_mm\_mul\_pd(v\_alpha, v\_b)$ πολλαπλασιάζει το περιεχόμενο των δύο διανυσμάτων μας και επιστρέφει ένα διάνυσμα μεγέθους 128bit τύπου double. Ενώ η $\_mm\_add\_pd$ προσθέτει το αποτέλεσμα της προηγούμενης συνάρτησης μαζί με τo διάνυσμα $v\_a$ και το αποθηκεύει στην $v\_a$.
+  \item Και τέλος η $\_mm\_storeu\_pd(a,v\_a)$ αποθηκεύει τα δεδομένα της $v\_a$ στο αρχικό μας πίνακα
+\end{itemize}
+
+Επίσης πρέπει να σημειωθεί οτι οι γραμμές από 1 με 2 και 5 έως 8 μπορούν να ενσωματωθούν σε μια, αλλά για καλύτερη επεξήγηση διαμορφώθηκαν όπως παραπάνω. 
+	Δηλαδή : 
+	
+\begin{lstlisting}
+  _mm_storeu_pd(a , _mm_add_pd(_mm_loadu_pd(a+i*2), 
+  _mm_mul_pd(_mm_load1_pd(&alpha), _mm_loadu_pd(b+i*2)))
+\end{lstlisting}
+
+Εναλλακτική  παραμετροποίηση με την χρήση AVX:
+
+\begin{lstlisting}
+	__m256d v_b, v_a; 
+	__m256d v_alpha =  _mm256_set1_pd(alpha); 
+
+	for( i = 0 ; i < n/4 ; i++){ 
+		v_b = _mm256_loadu_pd((const double *)(b+i*4)); 
+		v_a = _mm256_loadu_pd((const double *)(a+i*4)); 
+		v_a = _mm256_add_pd(v_a, _mm256_mul_pd(v_alpha, v_b)); 
+		_mm256_storeu_pd(a,v_a); 
+\end{lstlisting}
+
+Η επιλογή των συγκεκριμένων συναρτήσεων:
+\begin{itemize}
+  \item Οι πρώτες δύο γραμμές είναι παρόμοιες με αυτές των SSE εντολών με την βασικά διαφορά οτι αυτή την στιγμή το μέγεθος των διανυσμάτων μας       ειναι  διπλάσιο (δηλαδή 256bit)
+  \item Στη δεύτερη γραμμή παρατηρούμε οτι υπάρχει παρόμοια συνάρτηση load με αυτή του προηγούμενου παραδείγματος
+  \item Στην γραμμή 4 η επανάληψη μας είναι ακριβώς το 1/4 του αρχικού μεγέθος n και αυτό προκύπτει από 64/256 (bit) 
+  \item Όπως και στο προηγούμενο παράδειγμα έτσι και σε αυτό το load του περιεχομένου από τους αρχικούς πίνακες στα νέα διανύσματα γίνετε με την βοήθεια των συναρτήσεων AVX. Αλλά εδώ επειδή το βήμα μας είναι τετραπλάσιο έπρεπε να το πολλαπλασιασουμε για να βρούμε την σωστά την θέση μνήμης που πρέπει να φορτώσουμε στο διάνυσμα προς υπολογισμό.
+  \item Οι γραμμές 7 και 8 αποτελούν τις ανάλογες συναρτήσεις με αυτές του προηγούμενου παραδείγματος αλλά για διπλάσιου εύρους διανύσματα.
+\end{itemize}
+
+Όπως προηγουμένος έτσι και τώρα η γραμμή 8 μπορεί να διαμορφωθεί ως εξής:
+
+\begin{lstlisting}
+  _mm256_storeu_pd(a ,_mm256_add_pd(_mm256_loadu_pd((const double *)(a+i*4)),   
+  _mm256_mul_pd( _mm256_set1_pd(alpha), _mm256_loadu_pd((const double *)(b+i*4))))
+\end{lstlisting}
+
+\paragraph{\rom{4}.} \textbf{Πίνακες Μετρήσεων:}\newline
+\begin{table}[H]
+\begin{center}
+\label{tab:8} 
+\begin{tabular}{| l | c | r | l | c | r | l |}
+  \hline
+  \multicolumn{7}{|c|}{Διαστάσεις Πίνακα} \\ \hline
+  Αριθμός νημάτων & 512x512 (default) & 512x512 & 1000x1000 & 2000x2000 & 4000x4000 & 8000x8000\\ \hline 
+  1 thread   & 0.100672 &   0.119474 &  0.766664   & 6.164108  & 56.119012 &  425.185705 \\ \hline
+  2 threads  & 0.121911 &   0.119266  &  0.783317   & 6.194712  & 50.444379 &  397.134998\\ \hline
+  4 threads  & 0.096449  &   0.11049  &  0.780346   & 6.111779  & 49.832609 &  388.181593 \\ \hline
+  8 threads  & 0.098625 &   0.108838  &  0.767696   & 6.199719  & 49.868893 &  395.090218 \\ \hline
+\end{tabular}
+\caption {Πίνακας τιμών με OpenMP και SIMD (SSE) εντολές σε optimization level 0}
+\end{center}
+\end{table}
+
+\begin{table}[H]
+\begin{center}
+\label{tab:9} 
+\begin{tabular}{| l | c | r | l | c | r | l |}
+  \hline
+  \multicolumn{7}{|c|}{Διαστάσεις Πίνακα} \\ \hline
+  Αριθμός νημάτων & 512x512 (default) & 512x512 & 1000x1000 & 2000x2000 & 4000x4000 & 8000x8000\\ \hline 
+  1 thread   & 0.10666 &   0.109063 &  0.693762   & 5.587527  & 45.2327 &  355.558472 \\ \hline
+  2 threads  & 0.095242 &   0.094329  &  0.684101   & 5.571609  & 44.468379 &  372.040855\\ \hline
+  4 threads  & 0.092044  &   0.100773  &  0.681307   & 5.305545  & 43.766652 &  347.678544 \\ \hline
+  8 threads  & 0.088915 &   0.091586  &  0.702435   & 5.315351  & 43.025138 &  345.393891 \\ \hline
+\end{tabular}
+\caption {Πίνακας τιμών με OpenMP και SIMD (AVX) εντολές σε optimization level 0}
+\end{center}
+\end{table}
+
+\begin{table}[H]
+\begin{center}
+\label{tab:10} 
+\begin{tabular}{| l | c | r | l | c | r | l |}
+  \hline
+  \multicolumn{7}{|c|}{Διαστάσεις Πίνακα} \\ \hline
+  Αριθμός νημάτων & 512x512 (default) & 512x512 & 1000x1000 & 2000x2000 & 4000x4000 & 8000x8000\\ \hline 
+  1 thread   & 0.055045 &   0.029734 & 0.108977 & 1.023048 & 11.09527 & 93.892178  \\ \hline
+  2 threads  & 0.04447 & 0.028635 & 0.106384 & 1.002228 & 11.081743 & 93.407618 \\ \hline
+  4 threads  & 0.046969 & 0.024508 & 0.124202 & 0.96984 & 11.096639 & 95.541547 \\ \hline
+  8 threads  & 0.049405 & 0.02283 & 0.108177 & 0.990509 & 11.275533 & 94.207949 \\ \hline
+\end{tabular}
+\caption {Πίνακας τιμών με OpenMP και SIMD (SSE) εντολές σε optimization level 3}
+\end{center}
+\end{table}
+
+
+\begin{table}[H]
+\begin{center}
+\label{tab:11} 
+\begin{tabular}{| l | c | r | l | c | r | l |}
+  \hline
+  \multicolumn{7}{|c|}{Διαστάσεις Πίνακα} \\ \hline
+  Αριθμός νημάτων & 512x512 (default) & 512x512 & 1000x1000 & 2000x2000 & 4000x4000 & 8000x8000\\ \hline 
+  1 thread   & 0.04177 & 0.02143 & 0.128621 & 0.920402 & 11.111014 & 96.652766 \\ \hline
+  2 threads  & 0.039691 & 0.021044 & 0.123421 & 0.911558 & 11.184006 & 95.942312 \\ \hline
+  4 threads  & 0.042609 & 0.023831 & 0.127634 & 0.920812 & 14.930971 & 94.639101 \\ \hline
+  8 threads  & 0.053602 & 0.021345 & 0.112378 & 0.912268 & 11.053559 & 94.845744 \\ \hline
+\end{tabular}
+\caption {Πίνακας τιμών με OpenMP και SIMD (SSE) εντολές σε optimization level 3}
+\end{center}
+\end{table}
+
+\paragraph{\rom{3}.} \textbf{Γραφικές Παραστάσεις:}\newline
+
+\begin{figure}[ht]
+\centering
+\label{fig:SIMD}
+\includegraphics[width=0.8\textwidth]{simd_O0.png}
+\caption{\textit{Γραφική Παράσταση χρόνου εκτέλεσης OpenMP και SIMD (SSE) εντολές σε optimization level 0.}}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\label{fig:SIMDAVX}
+\includegraphics[width=0.9\textwidth]{simd_avx_O0.png}
+\caption{\textit{Γραφική Παράσταση χρόνου εκτέλεσης OpenMP και SIMD (AVX) εντολές σε optimization level 0.}}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\label{fig:SIMDO3}
+\includegraphics[width=0.9\textwidth]{simd_O3.png}
+\caption{\textit{Γραφική Παράσταση χρόνου εκτέλεσης OpenMP και SIMD (SSE) εντολές σε optimization level 3.}}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\label{fig:SIMDO3}
+\includegraphics[width=0.9\textwidth]{simd_avx_O3.png}
+\caption{\textit{Γραφική Παράσταση χρόνου εκτέλεσης OpenMP και SIMD (AVX) εντολές σε optimization level 3.}}
+\end{figure}
+
+\chapter{Κεφάλαιο 5 - Παρατηρήσεις}
+\paragraph{\rom{1}.} \textbf{Σφάλματα:}\newline
+\FloatBarrier
+Στο πείραμα μας είχαμε κάποια σφάλματα κατά την διάρκεια των εκτελέσεων των διαφόρων μετρήσεων καθώς υπήρχαν φορές όπου οι χρόνοι μας δεν
+συμφωνούσαν με τις προβλέψεις μας. Αυτό οφειλόταν κυρίως στο ότι καθώς οι απαιτήσεις των διαφόρων προγραμμάτων αυξάνονταν (π.χ. περισσότερα threads, περισσότερα δεδομένα προς επεξεργασία) ο υπολογιστής θερμαινόταν με αποτέλεσμα η CPU να δουλεύει σε πιο αργή συχνότητα.
+
+Ταυτόχρονα με την τεχνολογία TURBO BOOST, η οποία αυξομείωνε τη συχνότητα λειτουργίας του υπολογιστή είχαμε ως
+αποτέλεσμα τις αποκλίσεις στις τιμές μας. Ένας ακόμη παράγοντας που συνετέλεσε στο να υπάρχουν σφάλματα στις μετρήσεις είναι το ότι ανα
+πάσα στιγμή ο επεξεργαστής μπορεί να είχε άλλες εργασίες προς εκτέλεση ( του συστήματος) και έτσι δεν μπορούσαμε να τον
+εκμεταλλευτούμε πλήρως. 
+
+\paragraph{\rom{2}.} \textbf{Συμπεράσματα:}\newline
+
+Άξιο αναφοράς αποτελεί το γεγονός ότι παρόλο που τρέχαμε το πρόγραμμα μας με 8 threads και ενώ περιμέναμε διπλάσιο speedup απ'
+ότι τα 4 threads με βάση την θεωρία, υπήρξαν φορές όπου τα 4 threads είχαν σχεδόν ίδιους χρόνους εκτέλεσης με τα 8 threads.
+Αυτό συμβαίνει διότι το πρόγραμμα μας δεν μπορεί να παραλληλοποιηθεί πλήρως (Limited Parallelism). Για παράδειγμα έχουμε ένα πρόγραμμα
+του οποίου το ποσοστό που δεν παραλληλοποιείται είναι f απομένει ένα ποσοστό 1-f που μπορεί να παραλληλοποιηθεί υπό κάποιες συνθήκες. Εάν το πρόγραμμα μας χρειάζεται χρόνο $t_{s}$ για να εκτελεστεί σειριακά και έχουμε επεξεργαστές στη παράλληλη μηχανή, τότε το
+παραλληλοποιήσιμο τμήμα του κώδικα θα εκτελεστεί σε χρόνο $(1-f)*t_{s}/p$ , ενώ το μη παραλληλοποιήσιμο τμήμα του κώδικα θα
+χρειαστεί χρόνο $f*t_{s}$. Aρα ο συνολικός χρόνος εκτέλεσης του προγράμματος μας θα είναι :
+\\
+\begin{center}
+  $ t_{p} = f * t_{s} + \frac{(1-f)}{p}*t_{s} $
+\end{center}
+Το συνολικό speedup θα είναι : \\
+\begin{center}
+$ S = \frac{t_{s}}{t_{p}} = \frac{1}{f \frac{(1-f)}{p}}$
+\end{center}
+
+Έτσι βλέπουμε ότι αν αυξήσουμε πχ τον αριθμό των επεξεργαστών μας σε απείρους η συνολική βελτίωση θα
+είναι μόνο $ 1/f $.
+
+\FloatBarrier
+Άρα υπάρχει ένα όριο στο ποσοστό αύξησης της ταχύτητας εκτέλεσης ενός προγράμματος το οποίο σχετίζεται με το ποσοστό του κώδικα που
+δεν παραλληλοποιείται. (Νόμος του Amdahl)
+
+
+
+
+
+\end{document}
