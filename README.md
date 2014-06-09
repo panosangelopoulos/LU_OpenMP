@@ -8,9 +8,9 @@ Parallel dense blocked LU factorization.
 
 The implementations of this project includes: 
  - A serial version name **lu.c**
- - A paraller with OpenMP directives **lu_par.c**
- - A paraller combined with SIMD (SSE) **lu_simd.c**
- - A paraller combined with SIMD (AVX) **lu_simd_avx.c**
+ - A parallel with OpenMP directives **lu_par.c**
+ - A parallel combined with SIMD (SSE) **lu_simd.c**
+ - A paralle combined with SIMD (AVX) **lu_simd_avx.c**
 
 
 Compile with
